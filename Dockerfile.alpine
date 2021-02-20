@@ -1,0 +1,32 @@
+FROM alpine:3.13.2
+
+ENV CHINESE_DEPS \
+        libreoffice \
+        imagemagick \
+        python \
+        poppler-utils \
+        xdg-utils \
+        xz
+
+WORKDIR /bookstack/
+
+RUN apk update \
+    && apk add --no-cache --virtual .base-deps curl unzip tzdata \
+    && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && echo "Asia/Shanghai" > /etc/timezone
+    && apk add --no-cache --virtual .chinese-deps  ${CHINESE_DEPS} 
+
+RUN mkdir -p /opt/calibre \
+    && curl -fsSL https://download.calibre-ebook.com/linux-installer.py | python -c "import sys; main=lambda:sys.stderr.write('Download failed\n'); exec(sys.stdin.read()); main()" \
+    && ebook-convert --version
+
+RUN curl -LO https://github.com/TruthHun/BookStack/releases/download/v1.3.1/BookStack.V1.3.1_linux_amd64.zip \
+    && curl -o BookStack.V1.3.1_linux_amd64.zip "http://files.git.oschina.net/group1/M00/03/BA/PaAvDFsFZFSAbAOQASRKYadPGpU894.zip?token=e66b7c446e21d9dc9f3f67c409934cf1&ts=1529751362&attname=BookStack.V1.3.1_linux_amd64.zip" \
+    && ls -al \
+    && unzip BookStack.V1.3.1_linux_amd64.zip \
+    && mkdir -p /var/www \
+    && cp -arf BookStack.V1.3.1_linux_amd64/* /var/www \
+    && ls -al /var/www
+    && rm -rf BookStack.V1.3.1_linux_amd64*
+
+CMD [ "./BookStack install" ]
