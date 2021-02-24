@@ -20,7 +20,7 @@ RUN apt-get update -y \
 COPY conf .
 
 COPY entrypoint.sh /
-RUN chmod +x entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 8181
 
