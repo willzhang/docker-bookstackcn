@@ -17,7 +17,7 @@ RUN apt-get update -y \
     && chmod +x BookStack \
     && rm -rf BookStack.V${BOOKSTACK_VERSION}_Linux_amd64.zip /var/lib/apt/lists/* /var/cache/apt/*
 
-COPY conf .
+COPY conf ./conf
 
 COPY entrypoint.sh /
 RUN chmod +x /entrypoint.sh
