@@ -9,7 +9,65 @@ BookStack，基于MinDoc，使用Beego开发的在线文档管理系统，功能
 
 项目地址：[https://github.com/TruthHun/BookStack](https://github.com/TruthHun/BookStack)
 
+## docker-compose快速开始
+创建docker-compose文件
+```yaml
+version: "3"
+  
+services:
+  bookstack:
+    image: "willdockerhub/bookstack:v2.9_node"
+    ports:
+      - "8181:8181"
+    depends_on:
+      - db
+    restart: always
+    networks:
+      - bookstack
 
+  db:
+    image: "mysql:8.0.23"
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+      MYSQL_DATABASE: "bookstack"
+      MYSQL_USER: "bookstack"
+      MYSQL_PASSWORD: "bookstack123"
+    volumes:
+      - "mysql:/var/lib/mysql"
+    restart: always
+    networks:
+      - bookstack    
+
+networks:
+  bookstack:
+
+volumes:
+  mysql: 
+```
+运行docker-compose文件
+```shell
+docker-compose up -d
+```
+查看运行的容器
+```shell
+# docker-compose ps
+             Name                          Command             State                 Ports              
+--------------------------------------------------------------------------------------------------------
+docker-bookstackcn_bookstack_1   /entrypoint.sh                Up      0.0.0.0:8181->8181/tcp           
+docker-bookstackcn_db_1          docker-entrypoint.sh mysqld   Up      0.0.0.0:3306->3306/tcp, 33060/tcp
+```
+浏览器访问bookstack：[http://192.168.1.1:8181](http://192.168.1.1:8181)
+
+默认管理员账号和密码为 admin/admin888
+
+点击右侧管理员，我的项目中添加项目，编辑文档保存并发布，即可阅读书籍内容：
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20210220171108534.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L25ldHdvcmtlbg==,size_16,color_FFFFFF,t_70)
+清理部署环境(-v参数删除持久化卷)
+```shell
+docker-compose down -v
+```
 ## docker部署bookstack
 
 1、运行mysql容器
@@ -25,10 +83,21 @@ docker run -d --name mysql \
   -e MYSQL_USER=bookstack \
   -e MYSQL_PASSWORD=bookstack123 \
   -v mysql:/var/lib/mysql \
-  mysql --default-authentication-plugin=mysql_native_password
+  mysql:8.0.23
 ```
 
-2、下载并修改bookstack配置文件
+2、创建bookstack配置文件
+
+方式1：从容器中获取配置文件：
+
+```shell
+mkdir -p /data/bookstack/
+docker run -d --name bookstack --entrypoint='/bin/sh' willdockerhub/bookstack:v2.9_node
+docker cp bookstack:/tmp/conf/ /data/bookstack/
+docker rm -f bookstack
+```
+
+方式2：从官网获取配置文件
 
 获取对应release版本配置文件：[https://github.com/TruthHun/BookStack/tree/v2.9/conf](https://github.com/TruthHun/BookStack/tree/v2.9/conf)
 
@@ -36,12 +105,6 @@ docker run -d --name mysql \
 app.conf.example
 oauth.conf.example
 oss.conf.example
-```
-
-复制conf至本地/data/bookstack/目录下，该目录可自定义，配置文件重命名为xxx.conf，需要挂载到容器中：
-
-```shell
-mkdir -p /data/bookstack/conf
 ```
 
 修改app.conf，这里仅修改了数据库连接信息：
@@ -66,14 +129,21 @@ docker run -d --name bookstack \
   -v /data/bookstack/conf:/bookstack/conf \
   willdockerhub/bookstack:v2.9_node
 ```
+不挂载配置文件的方法
+```shell
+docker run -d --name bookstack \
+  --restart always \
+  -p 8181:8181 \
+  -e DB_HOST=172.29.118.192 \
+  -e DB_PORT=3306 \
+  -e DB_USERNAME=bookstack \
+  -e DB_PASSWORD=bookstack123 \
+  -e DB_DATABASE=bookstack \
+  -e RUN_MODE=prod \
+  willdockerhub/bookstack:v2.9_node
+```
 
-浏览器访问bookstack：[http://192.168.1.1:8181](http://192.168.1.1:8181)
-
-默认管理员账号和密码为 admin/admin888
-
-点击右侧管理员，选择我的项目，添加项目，然后选择编辑文档，完成后点击保存内容并发布书籍，即可阅读书籍内容：
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20210220171108534.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L25ldHdvcmtlbg==,size_16,color_FFFFFF,t_70)
-## 清理部署环境
+ 清理部署环境
 ```shell
 docker stop bookstack && docker rm bookstack
 docker stop mysql && docker rm mysql && docker volume rm mysql
