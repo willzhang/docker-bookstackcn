@@ -1,8 +1,7 @@
 FROM buildkite/puppeteer:7.1.0
 
 ENV BOOKSTACK_VERSION=2.9 \
-    LANG=C.UTF-8 \
-    CALIBRE_URL=https://raw.githubusercontent.com/kovidgoyal/calibre/master/setup/linux-installer.py
+    LANG=C.UTF-8
 
 WORKDIR /bookstack
 
@@ -10,16 +9,17 @@ RUN apt-get update -y \
     && apt-get install -y tzdata \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && apt-get install -y ttf-wqy-zenhei fonts-wqy-microhei \
-    && apt-get install -y unzip python xz-utils \
+    && apt-get install -y python3 python3-pip unzip xz-utils \
+    && pip3 install jinja2 \
     && wget -nv -O- https://download.calibre-ebook.com/linux-installer.sh | sh /dev/stdin \
     && wget https://github.com/TruthHun/BookStack/releases/download/v${BOOKSTACK_VERSION}/BookStack.V${BOOKSTACK_VERSION}_Linux_amd64.zip \
     && unzip BookStack.V${BOOKSTACK_VERSION}_Linux_amd64.zip \
     && chmod +x BookStack \
     && rm -rf BookStack.V${BOOKSTACK_VERSION}_Linux_amd64.zip /var/lib/apt/lists/* /var/cache/apt/*
 
+COPY conf/ /tmp/conf
+
 COPY entrypoint.sh /
 RUN chmod +x /entrypoint.sh
-
 EXPOSE 8181
-
-ENTRYPOINT [ "/entrypoint.sh" ]
+ENTRYPOINT ["/entrypoint.sh"]
