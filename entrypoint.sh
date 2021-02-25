@@ -1,8 +1,14 @@
-#!/bin/sh
-# generate config
-python3 /tmp/conf/generate.py app.conf.jinja app.conf
-python3 /tmp/conf/generate.py oauth.conf.jinja oauth.conf
-python3 /tmp/conf/generate.py oss.conf.jinja oss.conf
+#!/bin/bash
 
-# run bookstack
-/bookstack/BookStack install && /bookstack/BookStack
+# generate conf
+config_files=(app.conf oauth.conf oss.conf)
+for file in ${config_files[*]}
+do
+  if [ ! -f "/bookstack/conf/$file" ]; then
+    envsubst < /tmp/conf/${file}.example > /bookstack/conf/${file}
+  fi
+done
+
+/bookstack/BookStack install
+
+exec "$@"
