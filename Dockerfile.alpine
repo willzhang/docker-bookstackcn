@@ -1,32 +1,45 @@
-FROM alpine:3.13.2
+FROM frolvlad/alpine-glibc:glibc-2.29
 
-ENV CHINESE_DEPS \
-        libreoffice \
-        imagemagick \
-        python \
-        poppler-utils \
+ENV BOOKSTACK_VERSION=2.9 \
+    TZ=Asia/Shanghai \
+    LD_LIBRARY_PATH="/usr/lib:/opt/calibre/lib" \
+    PATH="$PATH:/opt/calibre" \
+    CALIBRE_URL=https://raw.githubusercontent.com/kovidgoyal/calibre/master/setup/linux-installer.py
+
+# install calibre
+RUN apk update && \
+    apk add --no-cache --upgrade \
+        bash \
+        ca-certificates \
+        gcc \
+        libxcomposite \
+        mesa-gl \
+        python3 \
+        qt5-qtbase-x11 \
         xdg-utils \
-        xz
+        xz \
+        wget \
+    && wget -O- ${CALIBRE_URL} | python3 -c "import sys; main=lambda:sys.stderr.write('Download failed\n'); exec(sys.stdin.read()); main(install_dir='/opt', isolated=True, version='5.3.0')" \
+    && rm -rf /tmp/calibre-installer-cache
 
 WORKDIR /bookstack/
 
-RUN apk update \
-    && apk add --no-cache --virtual .base-deps curl unzip tzdata \
-    && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
-    && echo "Asia/Shanghai" > /etc/timezone
-    && apk add --no-cache --virtual .chinese-deps  ${CHINESE_DEPS} 
+# install bookstack
+RUN apk -U add --no-cache tzdata unzip \
+    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && echo $TZ > /etc/timezone \
+    && wget -qO /usr/local/bin/envsubst https://github.com/a8m/envsubst/releases/download/v1.2.0/envsubst-Linux-x86_64 \
+    && chmod +x /usr/local/bin/envsubst \
+    && wget https://github.com/TruthHun/BookStack/releases/download/v${BOOKSTACK_VERSION}/BookStack.V${BOOKSTACK_VERSION}_Linux_amd64.zip \
+    && unzip BookStack.V${BOOKSTACK_VERSION}_Linux_amd64.zip \
+    && chmod +x BookStack \
+    && rm -rf BookStack.V${BOOKSTACK_VERSION}_Linux_amd64.zip
+	
+COPY conf/ /tmp/conf
 
-RUN mkdir -p /opt/calibre \
-    && curl -fsSL https://download.calibre-ebook.com/linux-installer.py | python -c "import sys; main=lambda:sys.stderr.write('Download failed\n'); exec(sys.stdin.read()); main()" \
-    && ebook-convert --version
+COPY entrypoint.sh /
+RUN chmod +x /entrypoint.sh
 
-RUN curl -LO https://github.com/TruthHun/BookStack/releases/download/v1.3.1/BookStack.V1.3.1_linux_amd64.zip \
-    && curl -o BookStack.V1.3.1_linux_amd64.zip "http://files.git.oschina.net/group1/M00/03/BA/PaAvDFsFZFSAbAOQASRKYadPGpU894.zip?token=e66b7c446e21d9dc9f3f67c409934cf1&ts=1529751362&attname=BookStack.V1.3.1_linux_amd64.zip" \
-    && ls -al \
-    && unzip BookStack.V1.3.1_linux_amd64.zip \
-    && mkdir -p /var/www \
-    && cp -arf BookStack.V1.3.1_linux_amd64/* /var/www \
-    && ls -al /var/www
-    && rm -rf BookStack.V1.3.1_linux_amd64*
-
-CMD [ "./BookStack install" ]
+ENTRYPOINT ["/entrypoint.sh"]
+EXPOSE 8181
+CMD ["/bookstack/BookStack"]
