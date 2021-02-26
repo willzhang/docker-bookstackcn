@@ -1,5 +1,7 @@
 FROM frolvlad/alpine-glibc:glibc-2.29
 
+# reference: https://github.com/Technosoft2000/docker-calibre-web
+
 ENV BOOKSTACK_VERSION=2.9 \
     TZ=Asia/Shanghai \
     LD_LIBRARY_PATH="/usr/lib:/opt/calibre/lib" \
