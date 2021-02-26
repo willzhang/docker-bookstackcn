@@ -1,7 +1,8 @@
 FROM buildkite/puppeteer:7.1.0
 
 ENV BOOKSTACK_VERSION=2.9 \
-    LANG=C.UTF-8
+    LANG=C.UTF-8 \
+    QTWEBENGINE_CHROMIUM_FLAGS="--no-sandbox"
 
 WORKDIR /bookstack
 
