@@ -21,7 +21,7 @@ services:
       MYSQL_USER: "bookstack"
       MYSQL_PASSWORD: "bookstack123"
     volumes:
-      - "mysql:/var/lib/mysql"
+      - "mysql-data:/var/lib/mysql"
     restart: always
     networks:
       - bookstack    
@@ -30,4 +30,4 @@ networks:
   bookstack:
 
 volumes:
-  mysql: 
+  mysql-data:

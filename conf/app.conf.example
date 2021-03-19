@@ -103,7 +103,7 @@ db_database=${DB_DATABASE:-bookstack}
 chrome=/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome
 
 # 如果使用 puppeteer，则忽略chrome
-puppeteer = ${PUPPETEER:-false}
+puppeteer = ${PUPPETEER:-true}
 
 #书籍默认封面
 cover=/static/images/book.png
