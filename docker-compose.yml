@@ -3,6 +3,7 @@ version: "3"
 services:
   bookstack:
     image: "willdockerhub/bookstack:v2.9_node"
+    container_name: bookstack
     ports:
       - "8181:8181"
     depends_on:
@@ -13,6 +14,7 @@ services:
 
   db:
     image: "mysql:8.0.23"
+    container_name: bookstack_mysql
     ports:
       - "3306:3306"
     environment:
