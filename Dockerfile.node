@@ -1,6 +1,6 @@
-FROM buildkite/puppeteer:7.1.0
+FROM buildkite/puppeteer:10.0.0
 
-ENV BOOKSTACK_VERSION=2.9 \
+ENV BOOKSTACK_VERSION=2.10 \
     LANG=C.UTF-8 \
     QTWEBENGINE_CHROMIUM_FLAGS="--no-sandbox"
 
