@@ -17,7 +17,7 @@ RUN apt-get update -y \
     && wget https://github.com/TruthHun/BookStack/releases/download/v${BOOKSTACK_VERSION}/BookStack-V${BOOKSTACK_VERSION}_Linux_amd64.zip \
     && unzip BookStack-V${BOOKSTACK_VERSION}_Linux_amd64.zip \
     && chmod +x BookStack \
-    && rm -rf BookStack.V${BOOKSTACK_VERSION}_Linux_amd64.zip \
+    && rm -rf BookStack-V${BOOKSTACK_VERSION}_Linux_amd64.zip \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
 COPY conf/ /tmp/conf
