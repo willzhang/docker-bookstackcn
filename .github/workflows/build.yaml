@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 env:
-  BOOKSTACK_VERSION: v2.10
+  BOOKSTACK_VERSION: v2.12
   DOCKERHUB_USERNAME: willdockerhub
   ALIYUN_USERNAME: willzhmic@outlook.com
   ALIYUN_REGISTRY_URL: registry.cn-shenzhen.aliyuncs.com
@@ -30,5 +30,7 @@ jobs:
     # pull retag and push images
     - name: get images
       run: |
-        docker build . --file Dockerfile.node --tag willdockerhub/bookstack:${BOOKSTACK_VERSION}_node
-        docker push willdockerhub/bookstack:${BOOKSTACK_VERSION}_node
+        docker build -t willdockerhub/bookstack:${BOOKSTACK_VERSION} .
+        docker push willdockerhub/bookstack:${BOOKSTACK_VERSION}
+        docker tag willdockerhub/bookstack:${BOOKSTACK_VERSION} registry.cn-shenzhen.aliyuncs.com/cnmirror/bookstack:{BOOKSTACK_VERSION}
+        docker push registry.cn-shenzhen.aliyuncs.com/cnmirror/bookstack:{BOOKSTACK_VERSION}
