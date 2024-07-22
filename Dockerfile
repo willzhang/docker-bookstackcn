@@ -17,7 +17,7 @@ RUN chmod +x /usr/local/bin/envsubst
 RUN apt install -y libegl1
 RUN apt install -y libopengl0
 RUN apt install -y libxcb-cursor0
-RUN apt install -y libgl1-mesa-glx libglx0 libegl1-mesa libxrandr2 libxrandr-dev libxi6 libxrender1 libxext6 libxfixes3
+RUN apt install -y libgl1-mesa-glx libglx0 libegl1-mesa libxrandr2 libxrandr-dev libxi6 libxrender1 libxext6 libxfixes3 libxkbfile1
 RUN wget -nv -O- https://download.calibre-ebook.com/linux-installer.sh | sh /dev/stdin
 RUN wget https://github.com/TruthHun/BookStack/releases/download/${BOOKSTACK_VERSION}/BookStack_${BOOKSTACK_VERSION}_Linux_amd64.zip
 RUN unzip BookStack_${BOOKSTACK_VERSION}_Linux_amd64.zip
