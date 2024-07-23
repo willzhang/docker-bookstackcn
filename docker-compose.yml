@@ -1,16 +1,17 @@
 services:
   bookstack:
+    # or registry.cn-shenzhen.aliyuncs.com/cnmirror/bookstack:v2.12
     image: "docker.io/willdockerhub/bookstack:v2.12"
     container_name: "bookstack"
     ports:
       - "8181:8181"
     depends_on:
-      - db
+      - bookstack_db
     restart: unless-stopped
     networks:
       - bookstack
 
-  db:
+  bookstack_db:
     image: "docker.io/library/mysql:8.4.1"
     container_name: "bookstack_db"
     ports:
