@@ -45,7 +45,7 @@ COPY conf/ /tmp/conf
 COPY entrypoint.sh /www/wwwroot/
 RUN chmod +x /www/wwwroot/entrypoint.sh
 
-EXPOSE 8181
+VOLUME /www/wwwroot
 
-ENTRYPOINT ["/www/wwwroot/entrypoint.sh"]
-CMD ["/www/wwwroot/BookStack"]
+EXPOSE 8181
+CMD ["/www/wwwroot/entrypoint.sh"]
