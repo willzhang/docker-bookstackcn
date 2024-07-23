@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Docker Image Build CI
 
 on: workflow_dispatch
   #push:
@@ -12,7 +12,7 @@ env:
 
 
 jobs:
-  get-images:
+  build-image:
     runs-on: ubuntu-latest
 
     steps:
