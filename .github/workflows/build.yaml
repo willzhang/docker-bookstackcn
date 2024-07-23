@@ -32,5 +32,5 @@ jobs:
       run: |
         docker build -t willdockerhub/bookstack:${BOOKSTACK_VERSION} .
         docker push willdockerhub/bookstack:${BOOKSTACK_VERSION}
-        docker tag willdockerhub/bookstack:${BOOKSTACK_VERSION} registry.cn-shenzhen.aliyuncs.com/cnmirror/bookstack:{BOOKSTACK_VERSION}
+        docker tag willdockerhub/bookstack:${BOOKSTACK_VERSION} registry.cn-shenzhen.aliyuncs.com/cnmirror/bookstack:${BOOKSTACK_VERSION}
         docker push registry.cn-shenzhen.aliyuncs.com/cnmirror/bookstack:${BOOKSTACK_VERSION}
