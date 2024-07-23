@@ -1,8 +1,8 @@
-version: "3"
 services:
   bookstack:
     image: "docker.io/willdockerhub/bookstack:v2.12"
     container_name: bookstack
+    command: sleep infinity
     ports:
       - "8181:8181"
     depends_on:
