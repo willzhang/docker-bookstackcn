@@ -7,7 +7,7 @@ services:
       - "8181:8181"
     depends_on:
       - db
-    restart: always
+    restart: unless-stopped
     networks:
       - bookstack
 
@@ -23,7 +23,7 @@ services:
       MYSQL_PASSWORD: "bookstack123"
     volumes:
       - "mysql-data:/var/lib/mysql"
-    restart: always
+    restart: unless-stopped
     networks:
       - bookstack
 
