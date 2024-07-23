@@ -45,7 +45,5 @@ COPY conf/ /tmp/conf
 COPY entrypoint.sh /www/wwwroot/
 RUN chmod +x /www/wwwroot/entrypoint.sh
 
-VOLUME /www/wwwroot
-
 EXPOSE 8181
 CMD ["/www/wwwroot/entrypoint.sh"]
